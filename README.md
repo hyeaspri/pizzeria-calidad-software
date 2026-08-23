@@ -40,3 +40,38 @@ pizzeria-calidad-software/
 ├── pizzeria.sql
 ├── .env.example
 └── .gitignore
+
+## Instalación
+
+1. Clonar el repositorio.
+
+2. Instalar las dependencias:
+
+```bash
+npm install
+```
+
+3. Crear la base de datos ejecutando el archivo `pizzeria.sql` en MySQL.
+
+4. Crear un archivo `.env` con los datos de conexión a MySQL.
+
+5. Iniciar el servidor:
+
+```bash
+node app.js
+```
+
+El servidor estará disponible en:
+
+```text
+http://localhost:3000
+```
+
+## Integrantes
+
+- Paula Román
+- Heidy Asprilla
+- Hayder Carreño
+- Daniela Rodríguez
+
+
