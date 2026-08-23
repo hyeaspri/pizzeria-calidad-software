@@ -1,6 +1,6 @@
 # Sistema de Gestión de Pedidos - Pizzería
 
-Proyecto realizado para el taller de Calidad de Software.
+Proyecto realizado para el taller de la guía 2 de Estandares Y Metricas De Calidad Del Software.
 
 Es una aplicación web para gestionar los pedidos de una pizzería. Permite consultar productos, agregar productos al carrito, registrar clientes y crear y consultar pedidos.
 
