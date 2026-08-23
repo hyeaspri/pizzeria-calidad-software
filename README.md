@@ -1,4 +1,4 @@
-# 🍕 Sistema de Gestión de Pedidos - Pizzería
+# Sistema de Gestión de Pedidos - Pizzería
 
 Proyecto realizado para el taller de Calidad de Software.
 
