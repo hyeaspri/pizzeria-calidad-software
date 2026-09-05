@@ -69,9 +69,9 @@ http://localhost:3000
 
 ## Integrantes
 
-- Paula Román
-- Heidy Asprilla
-- Hayder Carreño
-- Daniela Rodríguez
+- Paula Román (Administradora del Proyecto)
+- Heidy Asprilla (Líder de Calidad / Integrador)
+- Hayder Carreño (Analista de Calidad)
+- Daniela Rodríguez (Analista de Procesos)
 
 
