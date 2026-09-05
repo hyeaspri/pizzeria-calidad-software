@@ -1,0 +1,62 @@
+Sesión 4. Plan de Pruebas de Software (Software Testing Plan)
+Proyecto: Sistema de Gestión de Pedidos de una Pizzería
+Stack Tecnológico: Node.js / Express, HTML5 / JavaScript Vanilla, MySQL (pizzeria)
+Rol: Analista de Calidad / Líder de Calidad y Procesos (Heidy Asprilla)
+Norma de Referencia: ISO/IEC 29110:2016 – Perfil Básico (Proceso SI.5: Verificación y Validación)
+4.1. Objetivos del Plan de Pruebas
+Validación Funcional: Verificar que la API REST en Node.js/Express procese correctamente las operaciones de consulta y registro de clientes, productos y pedidos.  Integridad de Datos: Garantizar la persistencia y coherencia de la información en las tablas relacionales (clientes, productos, pedidos, detalle_pedido) de MySQL.  
+Control de Excepciones: Detectar errores de validación en la interfaz web y fallos de conexión a la base de datos antes de la entrega final.
+4.2. Alcance (Scope)
+Módulos a probar: Módulo de Gestión de Clientes, Módulo de Menú/Productos, Módulo de Registro de Pedidos y Detalles, y Conexión con Base de Datos MySQL.
+Tipos de prueba a ejecutar: Pruebas de API REST (Endpoints HTTP), Pruebas de Integración (Node.js y MySQL) y Pruebas de Interfaz de Usuario (Formulario de Pedidos).
+4.3. Matriz de Casos de Prueba (Test Cases - Pizzería)
+ID Caso
+Módulo / Función
+Descripción del Caso
+Datos de Entrada
+Resultado Esperado
+Criterio de Aprobación
+TC-01
+API REST / Pedidos
+Validar la disponibilidad del servicio backend de pedidos.
+Petición HTTP GET /api/pedidos
+Código HTTP 200 OK con respuesta JSON: {"status": "Success", "message": "Modulo de gestion de pedidos de pizzeria activo"}.
+Aprobado si responde con la estructura JSON correcta sin caídas del servidor.
+TC-02
+Base de Datos / Clientes
+Registrar un nuevo cliente en la base de datos MySQL.
+nombre: "Paula Román", 
+telefono: "3001234567", 
+direccion: "Carrera 19 #15-20"
+Inserción exitosa en la tabla clientes generando un id autoincremental.
+Aprobado si la información persiste correctamente en la BD.
+TC-03
+API REST / Productos
+Consulta de catálogo de pizzas y bebidas disponibles.
+Consulta a la tabla productos
+Retorno de lista de productos (ej. "Pizza Pepperoni" $28.000, "Pizza Hawaiana" $26.000, "Gaseosa" $5.000).
+Aprobado si muestra nombres, descripciones y precios correctos.
+TC-04
+Transaccional / Pedidos
+Registrar un pedido vinculando cliente y detalle de productos.
+cliente_id: 1, 
+producto_id: 1,
+cantidad: 1, total: 28000
+Creación de registro en la tabla pedidos con estado 'En preparación' e inserción en detalle_pedido.
+Aprobado si se guarda la cabecera del pedido y su detalle relacional.
+TC-05
+Interfaz / Validación
+Validar el comportamiento del formulario web ante datos vacíos.
+Intento de enviar pedido con campo de cliente o producto nulo.
+Alerta en pantalla que impide el envío y solicita completar los campos obligatorios.
+Aprobado si evita peticiones vacías a la API Node.js.
+
+
+
+
+4.4 Resultados de la Evaluación Cross-Testing:
+Un grupo par evaluó la aplicación web de la pizzería ejecutando el Plan de Pruebas sobre la rama main del repositorio GitHub (pizzeria-calidad-software). Los hallazgos documentados en el informe final son los siguientes:
+Hallazgo 1 (Menor - Validación de Backend): Al enviar una petición POST a la API de pedidos con un cliente_id inexistente en la base de datos, MySQL arroja un error de restricción de llave foránea (FOREIGN KEY constraint) que no es capturado amigablemente por Express.
+Acción Correctiva: Implementar un bloque try/catch con un middleware de control de errores en Node.js que responda un estado HTTP 400 con un mensaje entendible ("El cliente seleccionado no existe").
+Hallazgo 2 (Aceptación - Persistencia e Interfaz): Las operaciones de consulta del menú, inserción de clientes y almacenamiento de pedidos en la base de datos pizzeria funcionan correctamente y actualizan el estado del pedido ('Pendiente', 'En preparación', 'Listo') de forma coherente.
+Conclusión de Calidad: La aplicación web cumple satisfactoriamente con las actividades de verificación y validación (SI.5) del Perfil Básico de la norma ISO/IEC 29110, demostrando trazabilidad entre los requerimientos del cliente, el diseño de la base de datos MySQL y el código fuente alojado en GitHub.
