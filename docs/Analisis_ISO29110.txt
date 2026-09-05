@@ -1,0 +1,75 @@
+Sesión 1. Problemas de Administración del Proyecto y El Cliente
+Categoría A: Problemas con la Administración del Proyecto
+N°
+Problema Identificado
+Síntomas del Problema
+Solución Propuesta (ISO/IEC 29110 - PM)
+1
+Mala estimación de tiempos y esfuerzo
+Entregas con retraso, jornadas de trabajo no planificadas al final del ciclo y controladores de la API a medias (PUT/DELETE).
+Aplicar la estimación por Puntos de Historia o Juicio de Expertos al inicio (PM.1 Planificación), definiendo tareas claras en el tablero Kanban alineadas con la capacidad del equipo.
+2
+Falta de seguimiento a las tareas asignadas
+Desconocimiento del estado real del desarrollo entre integrantes y acumulación de cuellos de botella antes de las entregas.
+Realizar reuniones cortas de sincronización (PSP/TSP) y utilizar un tablero Kanban (Trello) para visualizar las actividades y avances en tiempo real.
+3
+Gestión ineficiente de riesgos del proyecto
+Fallas críticas no contempladas (ej. caídas de conexión con MySQL o pérdida de variables de entorno .env) que detienen la entrega
+Construir una matriz de riesgos desde la fase de inicio, evaluando impacto y probabilidad, e identificando acciones preventivas y de contingencia.
+
+
+Categoría B: Problemas con El Cliente
+
+N°
+Problema Identificado
+Síntomas del Problema
+Solución Propuesta (ISO/IEC 29110 - SI)
+1
+Ambigüedad e inestabilidad en los requerimientos
+Solicitudes constantes de cambio a mitad de desarrollo (scope creep) sobre los estados de los pedidos (Pendiente, En preparación, Listo).
+Elaborar un documento formal de Especificación de Requerimientos (SI.1) con criterios de aceptación claros y aprobación explícita del cliente antes de codificar en Node.js.
+2
+Falta de disponibilidad o comunicación tardía con el cliente 
+Bloqueos en el equipo de desarrollo por dudas de negocio no resueltas (ej. cómo calcular el IVA o cobros de domicilio).
+Establecer un canal de comunicación oficial (Teams/Slack) y fijar fechas semanales de demostración (Demos) obligatorias para validar avances.
+3
+Expectativas no alineadas sobre el alcance del proyecto 
+El cliente espera un sistema transaccional complejo con pasarela de pagos externa cuando el presupuesto solo contempla gestión local de pedidos.
+Definir formalmente la matriz de trazabilidad de requerimientos y un procedimiento estructurado para la Gestión de Solicitudes de Cambio que evalúe impacto en tiempo y costo. 
+
+
+Sesión 2. Problemas con la Selección de Prácticas de Desarrollo de Software
+Categoría C: Problemas con la Selección de Prácticas
+N°
+Problema Identificado
+Síntomas del Problema
+Solución Propuesta (ISO/IEC 29110 - SI)
+1
+Manejo deficiente del control de versiones (Git/GitHub)
+Conflictos severos al hacer merge en el archivo app.js, sobrescritura de funciones de compañeros y scripts SQL desactualizados (pizzeria.sql).
+Adoptar un flujo de trabajo estricto en Git (GitFlow), creando ramas por funcionalidad (feature/*) y exigiendo revisiones mediante Pull Requests antes de fusionar a main. 
+2
+Ausencia de un patrón de arquitectura claro
+Mezcla de consultas SQL directamente en las rutas HTTP de Express sin modularización, haciendo el código difícil de mantener y depurar.
+Aplicar SI.3 (Diseño de Software) separando responsabilidades bajo el patrón MVC (rutas, controladores REST y modelo/conexión a base de datos en db.js).
+3
+Falta de integración continua entre Frontend y Backend 
+El formulario web HTML/JS y la API REST en Express se desarrollan por separado y fallan al enviar/recibir objetos JSON durante la integración.
+Implementar integración continua y pruebas incrementales de endpoints REST (con Postman o cURL) a medida que se construyen los controladores HTTP. 
+
+
+Sesión 3. Problemas con la Mala Calidad del Producto de Software
+Categoría D: Problemas con la Mala Calidad del Producto de Software
+N°
+Problema Identificado
+Síntomas del Problema
+Solución Propuesta (ISO/IEC 29110 - SI)
+1
+Inexistencia de validación y sanitización de datos de entrada
+En el backend (app.js), el sistema permite insertar registros en la tabla clientes o pedidos con campos vacíos, textos en números de teléfono o montos de dinero negativos.
+Aplicar el proceso SI.5 (Verificación y Validación) implementando middlewares de validación en Express (ej. express-validator) tanto en el frontend como en la API para rechazar peticiones malformadas con un código HTTP 400.
+2
+Inconsistencia de datos por falta de manejo de transacciones en la BD
+Al registrar un pedido, si la inserción en la tabla cabecera pedidos resulta exitosa pero la inserción en detalle_pedido falla, quedan pedidos huérfanos con valor cero en MySQL.
+Implementar transacciones ACID en el conector MySQL de Node.js (db.beginTransaction(), commit(), rollback()), garantizando que la cabecera y el detalle del pedido se guarden atómicamente o se revierta toda la operación en caso de error. 
+
