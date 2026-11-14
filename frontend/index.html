@@ -3,506 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de gestión de pedidos para pizzería: menú, carrito, clientes y seguimiento de pedidos.">
     <title>Pizzería | Sistema de Pedidos</title>
-
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
 
-    <!-- ================= HEADER ================= -->
-
+    <!-- ================= ENCABEZADO ================= -->
     <header class="header">
+        <a class="logo" href="#inicio" data-seccion="inicio" aria-label="Ir al inicio">
+            <span class="logo-icono" aria-hidden="true">🍕</span>
+            <span class="logo-texto">Pizzería<small>Sistema de pedidos</small></span>
+        </a>
 
-        <div class="logo">
-            🍕 <span>PIZZERÍA</span>
-        </div>
-
-        <nav>
-            <button class="nav-btn active" onclick="mostrarSeccion('inicio')">
-                Inicio
-            </button>
-
-            <button class="nav-btn" onclick="mostrarSeccion('menu')">
-                Menú
-            </button>
-
-            <button class="nav-btn" onclick="mostrarSeccion('clientes')">
-                Clientes
-            </button>
-
-            <button class="nav-btn" onclick="mostrarSeccion('pedidos')">
-                Pedidos
-            </button>
-
-            <button class="cart-btn" onclick="abrirCarrito()">
-                🛒 Carrito
-                <span id="contadorCarrito">0</span>
-            </button>
+        <nav class="nav" aria-label="Secciones">
+            <button class="nav-btn activo" data-seccion="inicio">Inicio</button>
+            <button class="nav-btn" data-seccion="menu">Menú</button>
+            <button class="nav-btn" data-seccion="pedidos">Pedidos</button>
+            <button class="nav-btn" data-seccion="clientes">Clientes</button>
+            <button class="nav-btn" data-seccion="productos">Productos</button>
         </nav>
 
+        <button class="cart-btn" id="btnCarrito" aria-label="Abrir carrito">
+            <span aria-hidden="true">🛒</span> Carrito
+            <span class="contador" id="contadorCarrito" aria-live="polite">0</span>
+        </button>
     </header>
 
+    <div class="aviso-conexion" id="avisoConexion" role="alert" hidden>
+        No hay conexión con el servidor. Verifica que la API esté encendida (<code>npm start</code>).
+        <button class="link-btn" id="btnReintentar">Reintentar</button>
+    </div>
 
-    <!-- ================= CONTENIDO ================= -->
-
-    <main>
-
+    <main id="contenido">
 
         <!-- ================= INICIO ================= -->
-
-        <section id="inicio" class="seccion activa">
-
+        <section id="inicio" class="seccion activa" aria-labelledby="titulo-inicio">
             <div class="hero">
-
-                <div class="hero-content">
-
-                    <p class="small-title">BIENVENIDO A</p>
-
-                    <h1>
-                        La mejor pizza<br>
-                        está aquí 🍕
-                    </h1>
-
-                    <p>
-                        Disfruta nuestras pizzas, bebidas y realiza
-                        tus pedidos de manera rápida y sencilla.
-                    </p>
-
-                    <button class="primary-btn"
-                            onclick="mostrarSeccion('menu')">
-                        Ver menú
-                    </button>
-
+                <div class="hero-texto">
+                    <p class="etiqueta">Bienvenido</p>
+                    <h1 id="titulo-inicio">Pizza recién horneada, pedidos sin enredos</h1>
+                    <p>Arma tu pedido en segundos y sigue su estado desde el horno hasta tu puerta.</p>
+                    <div class="hero-acciones">
+                        <button class="btn btn-primario" data-seccion="menu">Ver el menú</button>
+                        <button class="btn btn-secundario" data-seccion="pedidos">Seguir pedidos</button>
+                    </div>
                 </div>
-
-                <div class="hero-image">
-                    🍕
+                <div class="hero-imagen" aria-hidden="true">
+                    <div class="pizza-plato">🍕</div>
                 </div>
-
             </div>
 
-
-            <div class="estadisticas">
-
-                <div class="stat-card">
-                    <span>🍕</span>
-                    <h3 id="totalProductos">0</h3>
-                    <p>Productos</p>
-                </div>
-
-                <div class="stat-card">
-                    <span>👥</span>
-                    <h3 id="totalClientes">0</h3>
-                    <p>Clientes</p>
-                </div>
-
-                <div class="stat-card">
-                    <span>📦</span>
-                    <h3 id="totalPedidos">0</h3>
-                    <p>Pedidos</p>
-                </div>
-
+            <h2 class="subtitulo">Resumen del negocio</h2>
+            <div class="kpis" id="kpis">
+                <div class="kpi skeleton"></div><div class="kpi skeleton"></div>
+                <div class="kpi skeleton"></div><div class="kpi skeleton"></div>
             </div>
 
+            <div class="paneles">
+                <article class="panel">
+                    <h3>Pedidos por estado</h3>
+                    <div id="graficoEstados" class="barras"></div>
+                </article>
+                <article class="panel">
+                    <h3>Productos más vendidos</h3>
+                    <ol id="masVendidos" class="ranking"></ol>
+                </article>
+            </div>
         </section>
 
-
-        <!-- ================= MENU ================= -->
-
-        <section id="menu" class="seccion">
-
-            <div class="section-header">
-
+        <!-- ================= MENÚ ================= -->
+        <section id="menu" class="seccion" aria-labelledby="titulo-menu">
+            <div class="seccion-encabezado">
                 <div>
-                    <p class="small-title">NUESTRO MENÚ</p>
-                    <h2>Elige tus favoritos 🍕</h2>
+                    <p class="etiqueta">Nuestro menú</p>
+                    <h2 id="titulo-menu">Elige tus favoritos</h2>
                 </div>
-
-                <div class="filtros">
-
-                    <button class="filtro active"
-                            onclick="filtrarProductos('Todos', this)">
-                        Todos
-                    </button>
-
-                    <button class="filtro"
-                            onclick="filtrarProductos('Pizza', this)">
-                        🍕 Pizzas
-                    </button>
-
-                    <button class="filtro"
-                            onclick="filtrarProductos('Bebida', this)">
-                        🥤 Bebidas
-                    </button>
-
-                </div>
-
+                <label class="buscador">
+                    <span class="sr-only">Buscar producto</span>
+                    <input type="search" id="buscarProducto" placeholder="Buscar pizza, bebida…" autocomplete="off">
+                </label>
             </div>
 
+            <div class="filtros" id="filtrosCategoria" role="toolbar" aria-label="Filtrar por categoría"></div>
 
-            <div id="productosContainer" class="productos-grid">
-
-                <div class="loading">
-                    Cargando productos...
-                </div>
-
+            <div id="productosContainer" class="productos-grid" aria-live="polite">
+                <div class="tarjeta-producto skeleton"></div>
+                <div class="tarjeta-producto skeleton"></div>
+                <div class="tarjeta-producto skeleton"></div>
             </div>
-
         </section>
-
-
-        <!-- ================= CLIENTES ================= -->
-
-        <section id="clientes" class="seccion">
-
-            <div class="section-header">
-
-                <div>
-                    <p class="small-title">GESTIÓN</p>
-                    <h2>Clientes 👥</h2>
-                </div>
-
-                <button class="primary-btn"
-                        onclick="abrirModalCliente()">
-                    + Nuevo cliente
-                </button>
-
-            </div>
-
-
-            <div class="table-container">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Teléfono</th>
-                            <th>Dirección</th>
-                            <th>Registro</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="clientesTable">
-
-                        <tr>
-                            <td colspan="5" class="loading">
-                                Cargando clientes...
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
 
         <!-- ================= PEDIDOS ================= -->
-
-        <section id="pedidos" class="seccion">
-
-            <div class="section-header">
-
+        <section id="pedidos" class="seccion" aria-labelledby="titulo-pedidos">
+            <div class="seccion-encabezado">
                 <div>
-                    <p class="small-title">GESTIÓN</p>
-                    <h2>Pedidos 📦</h2>
+                    <p class="etiqueta">Seguimiento en tiempo real</p>
+                    <h2 id="titulo-pedidos">Pedidos</h2>
+                    <p class="actualizado" id="ultimaActualizacion" aria-live="polite"></p>
                 </div>
-
-                <button class="primary-btn"
-                        onclick="abrirCarrito()">
-                    + Crear pedido
-                </button>
-
+                <div class="acciones-encabezado">
+                    <label class="buscador">
+                        <span class="sr-only">Buscar por cliente o número</span>
+                        <input type="search" id="buscarPedido" placeholder="Cliente o # pedido" autocomplete="off">
+                    </label>
+                    <button class="btn btn-primario" data-seccion="menu">+ Nuevo pedido</button>
+                </div>
             </div>
 
+            <div class="filtros" id="filtrosEstado" role="toolbar" aria-label="Filtrar por estado"></div>
 
-            <div class="table-container">
-
+            <div class="tabla-contenedor">
                 <table>
-
                     <thead>
-
                         <tr>
-                            <th>ID</th>
-                            <th>Cliente</th>
-                            <th>Teléfono</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Total</th>
-                            <th>Acciones</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Entrega</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col" class="num">Total</th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
                         </tr>
-
                     </thead>
-
                     <tbody id="pedidosTable">
-
-                        <tr>
-                            <td colspan="7" class="loading">
-                                Cargando pedidos...
-                            </td>
-                        </tr>
-
+                        <tr><td colspan="7" class="vacio">Cargando pedidos…</td></tr>
                     </tbody>
-
                 </table>
-
             </div>
-
         </section>
 
+        <!-- ================= CLIENTES ================= -->
+        <section id="clientes" class="seccion" aria-labelledby="titulo-clientes">
+            <div class="seccion-encabezado">
+                <div>
+                    <p class="etiqueta">Gestión</p>
+                    <h2 id="titulo-clientes">Clientes</h2>
+                </div>
+                <div class="acciones-encabezado">
+                    <label class="buscador">
+                        <span class="sr-only">Buscar cliente</span>
+                        <input type="search" id="buscarCliente" placeholder="Nombre, teléfono o correo" autocomplete="off">
+                    </label>
+                    <button class="btn btn-primario" id="btnNuevoCliente">+ Nuevo cliente</button>
+                </div>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Dirección</th>
+                            <th scope="col" class="num">Pedidos</th>
+                            <th scope="col" class="num">Total comprado</th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientesTable">
+                        <tr><td colspan="7" class="vacio">Cargando clientes…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ================= PRODUCTOS (ADMIN) ================= -->
+        <section id="productos" class="seccion" aria-labelledby="titulo-productos">
+            <div class="seccion-encabezado">
+                <div>
+                    <p class="etiqueta">Administración</p>
+                    <h2 id="titulo-productos">Productos</h2>
+                </div>
+                <button class="btn btn-primario" id="btnNuevoProducto">+ Nuevo producto</button>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col" class="num">Precio</th>
+                            <th scope="col">Disponible</th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="productosTable">
+                        <tr><td colspan="5" class="vacio">Cargando productos…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
-
-    <!-- ================= MODAL CARRITO ================= -->
-
-    <div id="modalCarrito" class="modal">
-
-        <div class="modal-content carrito-modal">
-
-            <div class="modal-header">
-
-                <h2>🛒 Tu carrito</h2>
-
-                <button class="close-btn"
-                        onclick="cerrarCarrito()">
-                    ×
-                </button>
-
-            </div>
-
-
-            <div id="carritoContainer">
-
-                <div class="carrito-vacio">
-                    <span>🛒</span>
-                    <p>Tu carrito está vacío</p>
-                </div>
-
-            </div>
-
-
-            <div class="carrito-footer">
-
-                <div class="total-carrito">
-
-                    <span>Total:</span>
-
-                    <strong id="totalCarrito">
-                        $0
-                    </strong>
-
-                </div>
-
-                <button class="primary-btn"
-                        onclick="abrirFormularioPedido()">
-                    Continuar pedido
-                </button>
-
-            </div>
-
+    <!-- ================= CARRITO (panel lateral) ================= -->
+    <dialog id="modalCarrito" class="drawer" aria-labelledby="titulo-carrito">
+        <div class="modal-header">
+            <h2 id="titulo-carrito">Tu carrito</h2>
+            <button class="close-btn" data-cerrar aria-label="Cerrar carrito">×</button>
         </div>
-
-    </div>
-
-
-    <!-- ================= MODAL CLIENTE ================= -->
-
-    <div id="modalCliente" class="modal">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h2>👤 Nuevo cliente</h2>
-
-                <button class="close-btn"
-                        onclick="cerrarModalCliente()">
-                    ×
-                </button>
-
-            </div>
-
-
-            <form id="formCliente">
-
-                <div class="form-group">
-
-                    <label>Nombre *</label>
-
-                    <input
-                        type="text"
-                        id="clienteNombre"
-                        placeholder="Nombre completo"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>Teléfono</label>
-
-                    <input
-                        type="text"
-                        id="clienteTelefono"
-                        placeholder="Ej: 3001234567"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>Dirección</label>
-
-                    <input
-                        type="text"
-                        id="clienteDireccion"
-                        placeholder="Dirección de entrega"
-                    >
-
-                </div>
-
-
-                <button class="primary-btn full-width"
-                        type="submit">
-
-                    Guardar cliente
-
-                </button>
-
-            </form>
-
+        <div id="carritoContainer" class="carrito-lista"></div>
+        <div class="carrito-footer">
+            <div class="fila-total"><span>Subtotal</span><strong id="subtotalCarrito">$ 0</strong></div>
+            <p class="nota">El domicilio se calcula al confirmar.</p>
+            <button class="btn btn-primario ancho" id="btnContinuar">Continuar pedido</button>
+            <button class="link-btn" id="btnVaciar">Vaciar carrito</button>
         </div>
+    </dialog>
 
-    </div>
-
-
-    <!-- ================= MODAL PEDIDO ================= -->
-
-    <div id="modalPedido" class="modal">
-
-        <div class="modal-content">
-
+    <!-- ================= CONFIRMAR PEDIDO ================= -->
+    <dialog id="modalPedido" aria-labelledby="titulo-confirmar">
+        <form id="formPedido" method="dialog" novalidate>
             <div class="modal-header">
-
-                <h2>📦 Confirmar pedido</h2>
-
-                <button class="close-btn"
-                        onclick="cerrarFormularioPedido()">
-                    ×
-                </button>
-
+                <h2 id="titulo-confirmar">Confirmar pedido</h2>
+                <button type="button" class="close-btn" data-cerrar aria-label="Cerrar">×</button>
             </div>
 
+            <div class="form-group">
+                <label for="selectCliente">Cliente *</label>
+                <div class="fila-campo">
+                    <select id="selectCliente" required></select>
+                    <button type="button" class="btn btn-secundario" id="btnClienteRapido">+ Nuevo</button>
+                </div>
+                <small class="error" data-error="cliente"></small>
+            </div>
 
-            <form id="formPedido">
+            <fieldset class="form-group">
+                <legend>Tipo de entrega</legend>
+                <div class="opciones">
+                    <label class="opcion"><input type="radio" name="tipo_entrega" value="Domicilio" checked> 🛵 Domicilio</label>
+                    <label class="opcion"><input type="radio" name="tipo_entrega" value="Recoger en tienda"> 🏪 Recoger en tienda</label>
+                </div>
+            </fieldset>
 
+            <div class="form-group" id="grupoDireccion">
+                <label for="direccionEntrega">Dirección de entrega *</label>
+                <input type="text" id="direccionEntrega" maxlength="200" placeholder="Calle, número, barrio">
+                <small class="error" data-error="direccion"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="metodoPago">Método de pago</label>
+                <select id="metodoPago">
+                    <option>Efectivo</option>
+                    <option>Tarjeta</option>
+                    <option>Transferencia</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="observaciones">Observaciones</label>
+                <textarea id="observaciones" rows="2" maxlength="255" placeholder="Ej: sin cebolla, timbre dañado…"></textarea>
+            </div>
+
+            <div class="resumen-pedido">
+                <h3>Resumen</h3>
+                <div id="resumenProductos"></div>
+                <div class="fila-total"><span>Subtotal</span><span id="resumenSubtotal">$ 0</span></div>
+                <div class="fila-total"><span>Domicilio</span><span id="resumenDomicilio">$ 0</span></div>
+                <div class="fila-total grande"><span>Total</span><strong id="resumenTotal">$ 0</strong></div>
+            </div>
+
+            <button class="btn btn-primario ancho" type="submit" id="btnConfirmar">Confirmar pedido 🍕</button>
+        </form>
+    </dialog>
+
+    <!-- ================= CLIENTE (crear / editar) ================= -->
+    <dialog id="modalCliente" aria-labelledby="titulo-cliente">
+        <form id="formCliente" method="dialog" novalidate>
+            <div class="modal-header">
+                <h2 id="titulo-cliente">Nuevo cliente</h2>
+                <button type="button" class="close-btn" data-cerrar aria-label="Cerrar">×</button>
+            </div>
+            <input type="hidden" id="clienteId">
+            <div class="form-group">
+                <label for="clienteNombre">Nombre completo *</label>
+                <input type="text" id="clienteNombre" maxlength="100" required autocomplete="name">
+                <small class="error" data-error="nombre"></small>
+            </div>
+            <div class="form-group">
+                <label for="clienteTelefono">Teléfono</label>
+                <input type="tel" id="clienteTelefono" maxlength="15" inputmode="numeric" placeholder="3001234567" autocomplete="tel">
+                <small class="error" data-error="telefono"></small>
+            </div>
+            <div class="form-group">
+                <label for="clienteEmail">Correo electrónico</label>
+                <input type="email" id="clienteEmail" maxlength="120" placeholder="nombre@correo.com" autocomplete="email">
+                <small class="error" data-error="email"></small>
+            </div>
+            <div class="form-group">
+                <label for="clienteDireccion">Dirección</label>
+                <input type="text" id="clienteDireccion" maxlength="200" placeholder="Dirección de entrega" autocomplete="street-address">
+                <small class="error" data-error="direccion"></small>
+            </div>
+            <button class="btn btn-primario ancho" type="submit">Guardar cliente</button>
+        </form>
+    </dialog>
+
+    <!-- ================= PRODUCTO (crear / editar) ================= -->
+    <dialog id="modalProducto" aria-labelledby="titulo-producto">
+        <form id="formProducto" method="dialog" novalidate>
+            <div class="modal-header">
+                <h2 id="titulo-producto">Nuevo producto</h2>
+                <button type="button" class="close-btn" data-cerrar aria-label="Cerrar">×</button>
+            </div>
+            <input type="hidden" id="productoId">
+            <div class="form-group">
+                <label for="productoNombre">Nombre *</label>
+                <input type="text" id="productoNombre" maxlength="100" required>
+                <small class="error" data-error="nombre"></small>
+            </div>
+            <div class="form-group">
+                <label for="productoDescripcion">Descripción</label>
+                <textarea id="productoDescripcion" rows="2" maxlength="255"></textarea>
+            </div>
+            <div class="fila-2">
                 <div class="form-group">
-
-                    <label>Seleccionar cliente *</label>
-
-                    <select id="selectCliente" required>
-
-                        <option value="">
-                            Selecciona un cliente
-                        </option>
-
-                    </select>
-
+                    <label for="productoPrecio">Precio (COP) *</label>
+                    <input type="number" id="productoPrecio" min="1" step="100" required>
+                    <small class="error" data-error="precio"></small>
                 </div>
-
-
-                <div class="resumen-pedido">
-
-                    <h3>Resumen</h3>
-
-                    <div id="resumenProductos"></div>
-
-                    <div class="resumen-total">
-
-                        <span>Total</span>
-
-                        <strong id="resumenTotal">
-                            $0
-                        </strong>
-
-                    </div>
-
+                <div class="form-group">
+                    <label for="productoCategoria">Categoría *</label>
+                    <select id="productoCategoria" required></select>
+                    <small class="error" data-error="categoria_id"></small>
                 </div>
-
-
-                <button class="primary-btn full-width"
-                        type="submit">
-
-                    Confirmar pedido 🍕
-                    
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-    <!-- ================= MODAL DETALLE PEDIDO ================= -->
-
-    <div id="modalDetalle" class="modal">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h2>📋 Detalle del pedido</h2>
-
-                <button class="close-btn"
-                        onclick="cerrarDetalle()">
-                    ×
-                </button>
-
             </div>
+            <label class="opcion"><input type="checkbox" id="productoDisponible" checked> Disponible para la venta</label>
+            <button class="btn btn-primario ancho" type="submit">Guardar producto</button>
+        </form>
+    </dialog>
 
-
-            <div id="detallePedidoContainer">
-
-                Cargando...
-
-            </div>
-
+    <!-- ================= DETALLE DEL PEDIDO ================= -->
+    <dialog id="modalDetalle" class="ancho-lg" aria-labelledby="titulo-detalle">
+        <div class="modal-header">
+            <h2 id="titulo-detalle">Detalle del pedido</h2>
+            <button class="close-btn" data-cerrar aria-label="Cerrar">×</button>
         </div>
+        <div id="detallePedidoContainer">Cargando…</div>
+    </dialog>
 
-    </div>
+    <!-- ================= CONFIRMACIÓN ================= -->
+    <dialog id="modalConfirmar" class="pequeno" aria-labelledby="titulo-confirmacion">
+        <h2 id="titulo-confirmacion">¿Estás seguro?</h2>
+        <p id="textoConfirmacion"></p>
+        <div class="botones-derecha">
+            <button class="btn btn-secundario" data-respuesta="no">Volver</button>
+            <button class="btn btn-peligro" data-respuesta="si" id="btnConfirmarAccion">Sí, continuar</button>
+        </div>
+    </dialog>
 
-
-    <!-- ================= NOTIFICACIÓN ================= -->
-
-    <div id="notificacion" class="notificacion">
-
-        <span id="notificacionTexto"></span>
-
-    </div>
-
+    <!-- ================= NOTIFICACIONES ================= -->
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
 
     <footer>
-
-        <p>
-            🍕 Pizzería &copy; 2026 |
-            Sistema de gestión de pedidos
-        </p>
-
+        <p>🍕 Pizzería © 2026 · Sistema de gestión de pedidos v2.0</p>
+        <p class="equipo">Paula Román · Heidy Asprilla · Hayder Carreño · Daniela Rodríguez</p>
     </footer>
 
-
+    <script src="utils.js"></script>
     <script src="script.js"></script>
-
 </body>
 </html>
