@@ -1,6 +1,6 @@
 # 🍕 Sistema de Gestión de Pedidos – Pizzería (v2.0)
 
-Proyecto de las asignaturas **Estándares y Métricas** e **Ingeniería Web**.
+Proyecto de las asignaturas **Estándares y Métricas de Calidad**.
 Aplicación web para consultar el menú, armar un carrito, registrar clientes, crear pedidos y seguir su estado en tiempo real.
 
 ## Equipo (roles TSP)
@@ -46,8 +46,11 @@ pizzeria-calidad-software/
 │   └── script.js
 ├── tests/                    # Casos CP-01 a CP-40 y generador del informe IEEE 829
 ├── docs/
-│   ├── informe-ejecucion-pruebas.md
-│   └── CHANGELOG.md          # Cambios de la v2.0 y defectos corregidos
+│   ├── Analisis_ISO29110.txt         # Sesiones 1-3: problemas de gestión, prácticas y calidad
+│   ├── Plan_de_Pruebas.txt           # Sesión 4: plan de pruebas y cross-testing
+│   ├── informe-ejecucion-pruebas.md  # Resultado de los 40 casos automáticos
+│   ├── CHANGELOG.md                  # Cambios de la v2.0 y defectos corregidos
+│   └── capturas/                     # Pantallas de la aplicación
 ├── pizzeria.sql              # Crea la base de datos con datos iniciales
 ├── package.json
 ├── .env.example
@@ -121,4 +124,18 @@ POST /api/pedidos
 **Códigos de respuesta:** `200` correcto · `201` creado · `400` datos inválidos · `404` no existe · `409` conflicto (duplicado, estado no permitido, registro en uso) · `500` error interno (sin detalles técnicos).
 
 ## Marco de calidad
-TSP (gestión del ciclo de vida) · ISO/IEC 25010 (características de calidad del producto) · ISO/IEC 12207 (procesos del ciclo de vida) · IEEE 829 (plan, casos e informe de pruebas) · Git/GitHub con ramas y Pull Requests.
+TSP (gestión del ciclo de vida) · ISO/IEC 29110 Perfil Básico (procesos PM y SI) · ISO/IEC 25010 (características de calidad del producto) · ISO/IEC 12207 (procesos del ciclo de vida) · IEEE 829 (plan, casos e informe de pruebas) · Git/GitHub con ramas y Pull Requests.
+
+## Trazabilidad con el análisis del semestre
+La versión 2.0 atiende los problemas identificados en `docs/Analisis_ISO29110.txt` y el hallazgo del cross-testing de `docs/Plan_de_Pruebas.txt`:
+
+| Problema identificado | Dónde se documentó | Solución en la v2.0 | Verificado por |
+|---|---|---|---|
+| Sin validación de datos de entrada (campos vacíos, teléfonos con letras, montos negativos) | Sesión 3, problema D1 | `src/validaciones.js` en la API, validación en los formularios y restricciones `CHECK` en MySQL | CP-07, CP-13 a CP-15, CP-24, CP-28 |
+| Pedidos huérfanos si falla el detalle | Sesión 3, problema D2 | Transacción con commit y rollback en `src/db.js` | CP-26, CP-27 |
+| SQL mezclado en las rutas, sin arquitectura clara | Sesión 2, problema C2 | Backend separado en módulos: conexión, validaciones, errores, estados y rutas | CP-01 a CP-40 |
+| Integración frontend-backend sin pruebas | Sesión 2, problema C3 | 40 pruebas automáticas de la API con `npm test` | CP-01 a CP-40 |
+| Control de versiones sin ramas | Sesión 2, problema C1 | Rama `feature/version-2` integrada con Pull Request | — |
+| Cliente inexistente producía error de llave foránea no controlado | Cross-testing, Hallazgo 1 | Se verifica el cliente y se responde 404 "Cliente no encontrado" | CP-25 |
+| Caída de conexión con MySQL no contemplada | Sesión 1, problema A3 | `/api/salud`, aviso de conexión en la interfaz y manejo central de errores | CP-40 |
+
