@@ -1,6 +1,6 @@
 # 🍕 Sistema de Gestión de Pedidos – Pizzería (v2.0)
 
-Proyecto de las asignaturas **Estándares y Métricas** e **Ingeniería Web**.
+Proyecto de las asignaturas **Estándares y Métricas de Calidad**.
 Aplicación web para consultar el menú, armar un carrito, registrar clientes, crear pedidos y seguir su estado en tiempo real.
 
 ## Equipo (roles TSP)
